@@ -24,7 +24,7 @@ type Str struct {
 
 type Bool struct {
 	Kind  string `json:"kind"`
-	Value string `json:"value"`
+	Value bool   `json:"value"`
 }
 
 type Binary struct {
@@ -32,6 +32,13 @@ type Binary struct {
 	Lhs  *Term  `json:"lhs"`
 	Op   string `json:"op"`
 	Rhs  *Term  `json:"rhs"`
+}
+
+type If struct {
+	Kind      string `json:"kind"`
+	Condition *Term  `json:"condition"`
+	Then      *Term  `json:"then"`
+	Otherwise *Term  `json:"otherwise"`
 }
 
 type Print struct {
@@ -42,11 +49,14 @@ type Print struct {
 type Value interface{}
 
 type Term struct {
-	Kind  string `json:"kind"`
-	Value Value  `json:"value"`
-	Op    string `json:"op,omitempty"`
-	Lhs   *Term  `json:"lhs,omitempty"`
-	Rhs   *Term  `json:"rhs,omitempty"`
+	Kind      string `json:"kind"`
+	Value     Value  `json:"value"`
+	Op        string `json:"op,omitempty"`
+	Lhs       *Term  `json:"lhs,omitempty"`
+	Rhs       *Term  `json:"rhs,omitempty"`
+	Condition *Term  `json:"condition"`
+	Then      *Term  `json:"then"`
+	Otherwise *Term  `json:"otherwise"`
 }
 
 func (t *Term) UnmarshalJSON(b []byte) error {
@@ -55,6 +65,7 @@ func (t *Term) UnmarshalJSON(b []byte) error {
 	var strValue Str
 	var boolValue Bool
 	var binaryValue Binary
+	var ifValue If
 
 	var term struct {
 		Kind string `json:"kind"`
@@ -63,6 +74,14 @@ func (t *Term) UnmarshalJSON(b []byte) error {
 		t.Kind = term.Kind
 
 		switch term.Kind {
+		case "If":
+			if err := json.Unmarshal(b, &ifValue); err == nil {
+				t.Condition = ifValue.Condition
+				t.Then = ifValue.Then
+				t.Otherwise = ifValue.Otherwise
+				return nil
+			}
+
 		case "Print":
 			if err := json.Unmarshal(b, &printValue); err == nil {
 				t.Value = printValue.Value
@@ -155,6 +174,17 @@ func evaluate(term Term) Value {
 			fmt.Printf("%t", val)
 		default:
 			fmt.Print("Value não permitido")
+		}
+
+	case "If":
+		val := evaluate(*term.Condition)
+		switch val {
+		case true:
+			return evaluate(*term.Then)
+		case false:
+			return evaluate(*term.Otherwise)
+		default:
+			fmt.Print("Condição não permitida")
 		}
 	default:
 		fmt.Print("Kind não implementado")

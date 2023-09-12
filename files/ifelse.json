@@ -1,0 +1,51 @@
+{
+  "name": "files/ifelse.rinha",
+  "expression": {
+    "kind": "Print",
+    "value": {
+      "kind": "If",
+      "condition": {
+        "kind": "Bool",
+        "value": false,
+        "location": {
+          "start": 10,
+          "end": 15,
+          "filename": "files/ifelse.rinha"
+        }
+      },
+      "then": {
+        "kind": "Str",
+        "value": "sim",
+        "location": {
+          "start": 22,
+          "end": 27,
+          "filename": "files/ifelse.rinha"
+        }
+      },
+      "otherwise": {
+        "kind": "Str",
+        "value": "não",
+        "location": {
+          "start": 41,
+          "end": 47,
+          "filename": "files/ifelse.rinha"
+        }
+      },
+      "location": {
+        "start": 6,
+        "end": 49,
+        "filename": "files/ifelse.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 50,
+      "filename": "files/ifelse.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 50,
+    "filename": "files/ifelse.rinha"
+  }
+}
